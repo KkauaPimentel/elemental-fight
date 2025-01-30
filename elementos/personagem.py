@@ -25,6 +25,9 @@ class Personagem:
     def atk(self):
         return self.ataque
     
+    def defense(self):
+        return self.defesa
+
     def reset(self):
         self.vida= self.vidaBase
         self.ataque= self.ataqueBase
