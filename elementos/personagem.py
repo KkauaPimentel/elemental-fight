@@ -30,6 +30,7 @@ class Personagem:
         if keys[pg.K_DOWN]:#BAIXO
             self.retang.y += self.vel
         
+        #garante que os personagens irão ficar no limite da tela
         self.retang.x= max(0, min(self.retang.x, tela_l - self.largura))
         self.retang.y= max(0, min(self.retang.y, tela_a - self.altura))
         
@@ -52,6 +53,7 @@ class Personagem:
     def defense(self):
         return self.defesa
 
+    #reseta os status dos personagens(usado pós buff)
     def reset(self):
         self.vida= self.vidaBase
         self.ataque= self.ataqueBase
