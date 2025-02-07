@@ -1,4 +1,4 @@
-```Mermaid
+```mermaid
 classDiagram
 direction LR
     class Personagem{
@@ -12,7 +12,7 @@ direction LR
     }
 
     class Client{
-        
+
     }
 
     class Server{
@@ -23,4 +23,3 @@ direction LR
     Rede "1" -- "1" Server
     Personagem "2" -- "1" Client
     Jogo "1" -- "1" Server
-```
