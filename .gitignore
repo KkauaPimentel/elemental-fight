@@ -2,5 +2,6 @@
 network.txt
 uv,lock
 imagens/base/
+__pycache__
 
 
