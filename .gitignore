@@ -1,6 +1,6 @@
 .venv
 network.txt
-uv,lock
+uv.lock
 imagens/base/
 __pycache__
 
