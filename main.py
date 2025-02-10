@@ -40,11 +40,9 @@ personagem2.rect.x = 800
 personagem2.rect.y = 570
 
 # Carrega as animações para cada personagem utilizando os métodos da classe base
-dic_anim1, lista_imgs1 = personagem1.get_imagens()
-dic_anim1 = personagem1.imagens(dic_anim1, lista_imgs1)
+dic_anim1 = personagem1.get_imagens()
 
-dic_anim2, lista_imgs2 = personagem2.get_imagens()
-dic_anim2 = personagem2.imagens(dic_anim2, lista_imgs2)
+dic_anim2 = personagem2.get_imagens()
 
 run = True
 while run:

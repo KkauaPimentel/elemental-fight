@@ -2,8 +2,8 @@ from .personagem import Personagem
 
 class Madeira(Personagem):
     
-    def __init__(self):
-        super().__init__(nome="Madeira")
+    def __init__(self, nome='Madeira'):
+        super().__init__(nome)
         
         self.tipo= 'madeira'
         self.set_atk(self.ataque - 8)

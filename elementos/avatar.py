@@ -1,12 +1,10 @@
-from .water import Agua
-from .fire import Fogo
-from .earth import Terra
-from .air import Ar
+from .personagem import Personagem
 
-class Avatar(Agua, Fogo, Terra, Ar):
+class Avatar(Personagem):
     def __init__(self, nome="Avatar"):
+        super.__init__(nome)
         self.tipo= 'avatar'
-        self.set_nome(nome)
+        # self.set_nome(nome)
         self.set_vida(300)
         self.vidaBase= self.vida
         self.set_def(999)
@@ -14,17 +12,11 @@ class Avatar(Agua, Fogo, Terra, Ar):
         self.set_atk(99)
         self.ataqueBase= self.ataque
     
+    def habilidade1(self):
+        return super().habilidade1()
+
+    def habilidade2(self):
+        return super().habilidade2()
+    
     def caminhos(self):
         pass
-
-# player= Avatar("aang")
-# print(player)
-# player.ira()
-# print(player)
-# player.warrior()
-# print(player)
-# player.turbo()
-# print(player)
-# player.caminhos()
-# print(player)
-

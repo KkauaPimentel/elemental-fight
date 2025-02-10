@@ -34,6 +34,3 @@ class Botao:
         else:
             return False
         
-# b= Botao('oi', 0,0,0,0)
-# print(b.txt)
-        

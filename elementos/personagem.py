@@ -15,15 +15,16 @@ class Personagem:
         self.largura = 25
         self.altura = 25
         self.cor = (255, 255, 255)
-        self.rect = pg.Rect(200, 570, self.largura, self.altura)  # Usando rect para posição e tamanho
+        self.rect = pg.Rect(200, 530, self.largura, self.altura)  # Usando rect para posição e tamanho
         self.vel = 20
         self.img_index = 0  # Índice para animação
         self.atc_index = 0  # Índice para animação de ataque
-        self.cont_h1= 0
-        self.cont_h2= 0
-        self.atc_index2 = 0  # Índice para animação de ataque
+        self.cont_h1= 0 # contador de habilidade1 usadas
+        self.cont_h2= 0 # contador de habilidade2 usadas
+        self.atc_index2 = 0  # Índice para animação de habilidades
         self.y = self.rect.y  # Posição Y inicial
-        self.x= self.rect.x
+        self.x= self.rect.x # Posição X inicial
+        self.mov= 'p' # Indica o último movimento realizado
     
     '''encontra as imagens que serão usadas e as coloca em uma lista.
     As imagens serão recortadas e usadas futuramente na função imagens(),
@@ -52,27 +53,23 @@ class Personagem:
 
         return dic_animacoes
     
-    #função que fará as animações/interações do personagem de acordo com as teclas pressionadas 
-    def desenhar(self, tela, oponente, mydic, opDic, opMov):
+    #função que fará as animações/interações do personagem/host de acordo com as teclas pressionadas 
+    def desenhar(self, tela, mydic, oponente):
         vel= self.vel
-        opVel= oponente.get_vel()
-
+        
         #se nada for pressionado, só roda a animação de parado
         myself_im= mydic['parado'][self.img_index]
         self.img_index+=1
         if self.img_index>= len(mydic['parado']):
             self.img_index= 0
-
-        op_im= opDic['parado'][oponente.img_index]
-        oponente.img_index+=1
-        if oponente.img_index>= len(opDic['parado']):
-            oponente.img_index= 0
-
+        self.mov='p'
+        #Inicia a captura de teclas pressionadas
         tecla= pg.key.get_pressed()
 
+        #fecha a janela se x for pressionado
         if tecla[pg.K_x]:
             pg.quit()
-
+        #Esquerda
         if tecla[pg.K_a]:
             if self.img_index >= len(mydic['correndo']):
                 self.img_index= 0
@@ -80,7 +77,8 @@ class Personagem:
             self.rect.x-= vel
             if self.rect.left<0:
                 self.rect.x=0
-        
+            self.mov='a'
+        #Direita
         if tecla[pg.K_d]:
             if self.img_index >= len(mydic['correndo']):
                 self.img_index= 0
@@ -88,27 +86,25 @@ class Personagem:
             self.rect.x+= vel
             if self.rect.right>tela.get_width():
                 self.rect.x=tela.get_width() - 25
-        
-        '''if (tecla[pg.K_w] and ply==1) or (tecla[pg.K_UP] and ply==2) and self.rect.top>0:
-            self.img_index=0 
-            myself_im= mydic['pulando'][self.img_index]
-            self.rect.y-= vel+25'''
-
+            self.mov='d'
+        #Defesa
         if tecla[pg.K_s]:
             self.img_index=0
             myself_im= mydic['defesa'][self.img_index]
+            self.mov='s'
 
-
+        #Ajustes para sair a animação completa do ataque
         if self.atc_index != 0:
             if self.atc_index <len(mydic['ataque']):
                 myself_im= mydic['ataque'][self.atc_index]
                 self.atc_index+=1
             else:
                 self.atc_index=0
-            
-        if tecla[pg.K_SPACE] and self.atc_index==0:
+        #ataque normal
+        if tecla[pg.K_h] and self.atc_index==0:
             self.atc_index= 1
             myself_im= mydic['ataque'][self.atc_index]
+            self.mov='h'
 
             # if self.rect.centerx < oponente.rect.centerx:
             #     ataque= pg.Rect((self.rect.right, self.rect.y, 70, 180))
@@ -117,7 +113,8 @@ class Personagem:
             
             # if ataque.colliderect(oponente.rect) and oponente.atc_index== 0:
             #     oponente.vida-=self.atk()
-
+        
+        #Ajuste para sair as animações completas de habilidades
         if self.atc_index2 != 0:
             if self.atc_index2 <len(mydic['ataque2']):
                 myself_im= mydic['ataque2'][self.atc_index2]
@@ -125,10 +122,12 @@ class Personagem:
             else:
                 self.atc_index2=0
             
-        if tecla[pg.K_c] and self.atc_index2== 0  and self.cont_h1<4:
+        #habilidade1    
+        if tecla[pg.K_j] and self.atc_index2== 0  and self.cont_h1<4:
             self.atc_index2=1
             self.cont_h1+=1
             myself_im= mydic['ataque2'][self.atc_index2]
+            self.mov='j'
 
             # if self.rect.centerx < oponente.rect.centerx:
             #     ataque= pg.Rect((self.rect.right, self.rect.y, 200, 180))
@@ -138,52 +137,21 @@ class Personagem:
             # if ataque.colliderect(oponente.rect) and oponente.atc_index== 0:
             #     oponente.vida-=self.habilidade1()
 
-        if tecla[pg.K_v] and self.cont_h2<3:
+        #habilidade2
+        if tecla[pg.K_k] and self.cont_h2<3:
             self.habilidade2()
             self.cont_h2+=1
-
-        if opMov =='a':
-            if oponente.img_index >= len(opDic['correndo']):
-                oponente.img_index= 0
-            op_im= opDic['correndo'][oponente.img_index]
-            oponente.rect.x-= opVel
-            if oponente.rect.left>tela.get_width():
-                oponente.rect.x=tela.get_width() - 25
-        
-        if opMov =='d':
-            if oponente.img_index >= len(opDic['correndo']):
-                oponente.img_index= 0
-            op_im= opDic['correndo'][oponente.img_index]
-            oponente.rect.x+= opVel
-            if oponente.rect.right>tela.get_width():
-                oponente.rect.x=tela.get_width() - 25
-        
-        if opMov =='s':
-            if oponente.img_index >= len(opDic['defesa']):
-                oponente.img_index= 0
-            op_im= opDic['defesa'][oponente.img_index]
-            
+            self.mov='k'
+    
         '''esse trecho garante que os oersonagens irão ficar um de frente para o outro
         caso não estejam, inverte a imagem. Insere os personagens em tela com blit'''
-        tela.blit(myself_im, (self.rect.x - 190, self.rect.y - 148))
-        tela.blit(op_im, (oponente.rect.x - 190, oponente.rect.y - 148))
-        # if self.rect.centerx> oponente.rect.centerx:
-        #     myself_im= pg.transform.flip(myself_im, True, False)
-        # if ply==1:
-        #     tela.blit(myself_im, (self.rect.x - 190, self.rect.y - 148))
-        # else:
-        #     tela.blit(myself_im, (self.rect.x - 190, self.rect.y - 148))
+        if self.rect.centerx> oponente.rect.centerx:
+            myself_im= pg.transform.flip(myself_im, True, False)
+        
 
-    #função para retornar as animações em si 
-    def imagens(self, dic, lista):
-        for ind, tipo in enumerate(dic):#cria indices dentro do dic
-            img_l = lista[ind].get_width()
-            img_a = lista[ind].get_height()
-            for frame in range(int(img_l / img_a)):#pega quantos e com quais frames irá trabalhar
-                img = lista[ind].subsurface(frame*img_a,0,img_a,img_a)#faz o corte quadrado de acordo com o frame
-                dic[tipo].append(pg.transform.scale(img, (img_a*3,img_a*3)))#redimensiona e add
-        return(dic)
-    
+        tela.blit(myself_im, (self.rect.x - 190, self.rect.y - 148))
+        
+
     #função futura que retornará o dano para a habilidade 1 do personagem
     def habilidade1(self):
         pass
@@ -255,4 +223,75 @@ class Personagem:
         part1 = f"{self.nome} | Vida: {self.vida:.2f} |"
         part2 = f"Ataque: {self.ataque:.2f} | Defesa: {self.defesa:.2f}"
         return part1 + part2
-    
+       
+
+    def drawOponent(self, tela, oponente):
+        """Desenha o oponente na tela de acordo com o movimento (mov) informado.
+        mov deve ser uma string representando a tecla pressionada pelo oponente:
+        'a' para esquerda, 'd' para direita, 's' para defesa, 'h' para ataque, 'j' para habilidade1, 'k' para habilidade2.
+        Se mov não for especificado, usa 'parado'."""
+        
+        dic_op = oponente.get_imagens()
+        opVel = oponente.get_vel()
+
+        # Se nenhum movimento específico, use a animação 'parado'
+        op_img = dic_op['parado'][oponente.img_index]
+        oponente.img_index += 1
+        if oponente.img_index >= len(dic_op['parado']):
+            oponente.img_index = 0
+
+        # Movimento para a esquerda
+        if oponente.mov == 'a':
+            if oponente.img_index >= len(dic_op['correndo']):
+                oponente.img_index = 0
+            op_img = dic_op['correndo'][oponente.img_index]
+            oponente.rect.x -= opVel
+            if oponente.rect.left < 0:
+                oponente.rect.x = 0
+
+        # Movimento para a direita
+        if oponente.mov == 'd':
+            if oponente.img_index >= len(dic_op['correndo']):
+                oponente.img_index = 0
+            op_img = dic_op['correndo'][oponente.img_index]
+            oponente.rect.x += opVel
+            if oponente.rect.right > tela.get_width():
+                oponente.rect.x = tela.get_width() - 25
+
+        # Defesa
+        if oponente.mov == 's':
+            oponente.img_index = 0
+            op_img = dic_op['defesa'][oponente.img_index]
+
+        # Ataque normal
+        if oponente.mov == 'h':
+            if oponente.atc_index == 0:
+                oponente.atc_index = 1
+            if oponente.atc_index < len(dic_op['ataque']):
+                op_img = dic_op['ataque'][oponente.atc_index]
+                oponente.atc_index += 1
+            else:
+                oponente.atc_index = 0
+
+        # Habilidade 1
+        if oponente.mov == 'j' and oponente.atc_index2 == 0 and oponente.cont_h1 < 4:
+            oponente.atc_index2 = 1
+            oponente.cont_h1 += 1
+        if oponente.atc_index2 != 0:
+            if oponente.atc_index2 < len(dic_op['ataque2']):
+                op_img = dic_op['ataque2'][oponente.atc_index2]
+                oponente.atc_index2 += 1
+            else:
+                oponente.atc_index2 = 0
+
+        # Habilidade 2
+        if oponente.mov == 'k' and oponente.cont_h2 < 3:
+            oponente.habilidade2()
+            oponente.cont_h2 += 1
+
+        # Garante que os personagens fiquem de frente um para o outro
+        if oponente.rect.centerx > self.rect.centerx:
+            op_img = pg.transform.flip(op_img, True, False)
+
+        # Desenha o oponente na tela
+        tela.blit(op_img, (oponente.rect.x - 190, oponente.rect.y - 148))
