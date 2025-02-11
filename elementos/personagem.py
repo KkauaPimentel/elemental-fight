@@ -15,7 +15,7 @@ class Personagem:
         self.largura = 25
         self.altura = 25
         self.cor = (255, 255, 255)
-        self.rect = pg.Rect(200, 530, self.largura, self.altura)  # Usando rect para posição e tamanho
+        self.rect = pg.Rect(100, 530, self.largura, self.altura)  # Usando rect para posição e tamanho
         self.vel = 20
         self.img_index = 0  # Índice para animação
         self.atc_index = 0  # Índice para animação de ataque
@@ -105,14 +105,6 @@ class Personagem:
             self.atc_index= 1
             myself_im= mydic['ataque'][self.atc_index]
             self.mov='h'
-
-            # if self.rect.centerx < oponente.rect.centerx:
-            #     ataque= pg.Rect((self.rect.right, self.rect.y, 70, 180))
-            # else:
-            #     ataque= pg.Rect((self.rect.left-80, self.rect.y, 70, 180))
-            
-            # if ataque.colliderect(oponente.rect) and oponente.atc_index== 0:
-            #     oponente.vida-=self.atk()
         
         #Ajuste para sair as animações completas de habilidades
         if self.atc_index2 != 0:
@@ -129,13 +121,13 @@ class Personagem:
             myself_im= mydic['ataque2'][self.atc_index2]
             self.mov='j'
 
-            # if self.rect.centerx < oponente.rect.centerx:
-            #     ataque= pg.Rect((self.rect.right, self.rect.y, 200, 180))
-            # else:
-            #     ataque= pg.Rect((self.rect.left-150, self.rect.y, 200, 180))
+            if self.rect.centerx < oponente.rect.centerx:
+                ataque= pg.Rect((self.rect.right, self.rect.y, 200, 180))
+            else:
+                ataque= pg.Rect((self.rect.left-150, self.rect.y, 200, 180))
             
-            # if ataque.colliderect(oponente.rect) and oponente.atc_index== 0:
-            #     oponente.vida-=self.habilidade1()
+            if ataque.colliderect(oponente.rect) and oponente.atc_index== 0:
+                oponente.vida-=self.habilidade1()
 
         #habilidade2
         if tecla[pg.K_k] and self.cont_h2<3:
@@ -187,20 +179,8 @@ class Personagem:
     def set_def(self, new):
         self.defesa = max(0, new)
 
-    def set_imIndex(self, value):
-        self.img_index= value
-
-    def  get_vida(self):
-        return self.vida
-    
     def get_vel(self):
         return self.vel
-    
-    def get_x(self):
-        return self.x
-    
-    def get_y(self):
-        return self.y
     
     def get_imIndex(self):
         return self.img_index
@@ -226,11 +206,10 @@ class Personagem:
        
 
     def drawOponent(self, tela, oponente):
-        """Desenha o oponente na tela de acordo com o movimento (mov) informado.
-        mov deve ser uma string representando a tecla pressionada pelo oponente:
-        'a' para esquerda, 'd' para direita, 's' para defesa, 'h' para ataque, 'j' para habilidade1, 'k' para habilidade2.
-        Se mov não for especificado, usa 'parado'."""
-        
+        """
+        --- Desenha o oponente na tela de acordo com o movimento (atributo mov) do oponente ---
+        Ex.: 'a' esquerda, 'd' direita...
+        """
         dic_op = oponente.get_imagens()
         opVel = oponente.get_vel()
 
@@ -262,6 +241,8 @@ class Personagem:
         if oponente.mov == 's':
             oponente.img_index = 0
             op_img = dic_op['defesa'][oponente.img_index]
+            if (self.atc_index != 0 or self.atc_index2!= 0):
+                oponente.vida-= self.atk() - oponente.defesa()
 
         # Ataque normal
         if oponente.mov == 'h':
@@ -270,19 +251,37 @@ class Personagem:
             if oponente.atc_index < len(dic_op['ataque']):
                 op_img = dic_op['ataque'][oponente.atc_index]
                 oponente.atc_index += 1
+
             else:
                 oponente.atc_index = 0
+            
+            if self.rect.centerx > oponente.rect.centerx:
+                ataque= pg.Rect((oponente.rect.right, oponente.rect.y, 70, 180))
+            else:
+                ataque= pg.Rect((oponente.rect.left-55, oponente.rect.y, 70, 180))
+            
+            if ataque.colliderect(self.rect):
+                self.vida-=oponente.atk()
+        
 
         # Habilidade 1
-        if oponente.mov == 'j' and oponente.atc_index2 == 0 and oponente.cont_h1 < 4:
-            oponente.atc_index2 = 1
-            oponente.cont_h1 += 1
-        if oponente.atc_index2 != 0:
+        if oponente.mov == 'j' and oponente.cont_h1 < 4:
+            if oponente.atc_index2==0:
+                oponente.atc_index2= 1
+                
             if oponente.atc_index2 < len(dic_op['ataque2']):
-                op_img = dic_op['ataque2'][oponente.atc_index2]
-                oponente.atc_index2 += 1
+                    op_img = dic_op['ataque2'][oponente.atc_index2]
+                    oponente.atc_index2 += 1
             else:
-                oponente.atc_index2 = 0
+                    oponente.atc_index2 = 0
+            oponente.cont_h1+=1
+            if self.rect.centerx > oponente.rect.centerx:
+                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+            else:
+                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                
+            if ataque.colliderect(self.rect):
+                self.vida-=oponente.habilidade1()
 
         # Habilidade 2
         if oponente.mov == 'k' and oponente.cont_h2 < 3:
@@ -294,4 +293,4 @@ class Personagem:
             op_img = pg.transform.flip(op_img, True, False)
 
         # Desenha o oponente na tela
-        tela.blit(op_img, (oponente.rect.x - 190, oponente.rect.y - 148))
+        tela.blit(op_img, (oponente.rect.x - 200, oponente.rect.y - 148))

@@ -25,6 +25,7 @@ img_selec = pg.image.load(os.path.join('imagens', 'fundo-tela.jpg'))
 nome = ''#Nome do personagem
 select = None# Indica que personagem foi escolhido no botão
 host = None  # Objeto do personagem do host
+flag_host= False
 oponente = None  # O objeto do personagem oponente
 flag= False # Indica se há oponente ou não
 '''
@@ -99,51 +100,75 @@ def tela_combat():
     global host, oponente
 
     background(img_fundo)
-
-    # Desenha o host e sua vida
-    if host is not None and oponente is not None:
-        dic_host = host.get_imagens()
-        host.desenhar(tela, dic_host, oponente)
-        host.life(tela, host.vida, host.vidaBase, 20, 20)
-        
-    # Se o oponente foi selecionado, desenha
     if oponente is not None:
-        # Desenha o oponente com base no último movimento recebido
-        host.drawOponent(tela, oponente)
-        # Exibe a barra de vida do oponente mais a direita(oponente.x >> host.x)
-        oponente.life(tela, oponente.vida, oponente.vidaBase, 540, 20)
+        # Se o oponente foi selecionado, desenha
+        if oponente is not None:
+            # Desenha o oponente com base no último movimento recebido
+            host.drawOponent(tela, oponente)
+            # Exibe a barra de vida do oponente mais a direita(oponente.x >> host.x)
+            oponente.life(tela, oponente.vida, oponente.vidaBase, 540, 20)
+        
+        # Desenha o host e sua vida
+        if host is not None and oponente is not None:
+            dic_host = host.get_imagens()
+            host.desenhar(tela, dic_host, oponente)
+            host.life(tela, host.vida, host.vidaBase, 20, 20)
+    else:
+        tela_atual= 'selecao'
+        
 
     pg.display.update()
+
+def tela_win():
+    tela.fill((0,0,0))
+
+    fonte = pg.font.SysFont('arial', 44)
+    
+    pg.draw.rect(tela, (88,0,0), (327, tela.get_height()/2, 316, 50))
+    pg.draw.rect(tela, (200,200,200), (337, tela.get_height()/2, 300, 40))
+
+    if host.vida<1:
+        txt = fonte.render("You lose...", True, (0,0,0))
+        # print("derrota!")
+    else:
+        txt = fonte.render("You win!!!", True, (0,0,0))
+        # print('vitoria!')
+    
+    tela.blit(txt, (342, tela.get_height()/2))
+    tela_atual= 'win'
+    pg.display.update()
+    
+    
+
 
 # --- Thread de comunicação ---
 def comunicacao():
     """
-    Este loop envia periodicamente o estado do cliente para o servidor e recebe do servidor
-    uma tupla (oponente_obj, flag). A interpretação é a seguinte:
-      - (None, False): o oponente ainda não está conectado.
-      - (None, True): o oponente está conectado, mas ainda não escolheu.
-      - (object, True): o oponente já escolheu seu personagem.
+    Este loop envia periodicamente as decisões do cliente para o servidor e recebe do servidor
+    uma tupla (oponente_obj, flag) do oponente
     """
-    global host, oponente, flag
+    global host, oponente, flag, flag_host
     while True:
         try:
-            # Se o cliente ainda não escolheu seu personagem, host é None.
-            # Nesse caso, enviamos (None, True) para indicar "estou conectado"
-            # (a flag True é para indicar que o cliente está pronto para jogar).
+            '''--- Envio de mensagens para o servidor ---
+            Se o host não estiver conectado, o servidor recebe (None, False)
+            Se o host conecta, envia (None, True), ainda na tela de espera
+            Se ainda não escolheu ser personagem, envia novamente (None, True), na tela de seleção
+            Se o host escolheu, envia (objt_host, True)
+            '''
+
             if host is None:
                 msg = (None, True)
             else:
                 msg = (host, True)
+            # Envia a decisão serializada(Binária) para o servidor
             client.send(pk.dumps(msg))
             
-            # Recebe do servidor a tupla com o estado do oponente.
+            # Recebe do servidor a tupla com o estado do oponente e desserializa
             data = client.recv(4096)
             resp = pk.loads(data)
             
-            # Interpretação do que foi recebido:
-            # Se resp[1] for True e resp[0] for None -> o oponente está conectado mas ainda não escolheu.
-            # Se resp[1] for True e resp[0] não for None -> o oponente já escolheu.
-            # Se resp[1] for False -> o oponente não está presente (ou desconectado).
+            # Line 31 - 34
             if resp[1] == True:
                 oponente = resp[0]
                 flag= True
@@ -180,9 +205,14 @@ def loop():
                     # Flag indica que há oponente
                     if flag== True:
                         tela_atual = 'selecao'
+                if tela_atual == 'combate' and oponente is None:
+                    tela_atual= 'selecao'
                 # Se tecla r, volta para tela de seleção  
                 if tela_atual == 'combate' and evento.key == pg.K_r:
+                    # host= None    
                     tela_atual = 'selecao'
+                if tela_atual=='win' and evento.key == pg.K_r:
+                    tela_atual='selecao'
                 # Interações de escolha da tela de seleção
                 if tela_atual == 'selecao':
                     # Apaga uma letra digitada
@@ -231,7 +261,10 @@ def loop():
         elif tela_atual == 'selecao':
             tela_selecao()
         elif tela_atual == 'combate':
-            tela_combat()
+            if host.vida<= 0 or oponente.vida <=0:
+                tela_win()
+            else:
+                tela_combat()
     # Fecha a tela se aperta X da tela/teclado
     pg.quit()
 

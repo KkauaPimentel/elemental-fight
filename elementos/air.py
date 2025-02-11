@@ -11,6 +11,7 @@ class Ar(Personagem):
         self.vidaBase= self.vida
         self.set_def(self.defesa - 7)
         self.defesaBase= self.defesa
+        self.vel= 80
     
     def habilidade1(self):
         return (self.atk() * 1.4)
