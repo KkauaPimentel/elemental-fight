@@ -4,7 +4,7 @@ import os
 
 class Avatar(Personagem):
     def __init__(self, nome="Avatar"):
-        super.__init__(nome)
+        super().__init__(nome)
         self.tipo= 'avatar'
         # self.set_nome(nome)
         self.set_vida(300)
@@ -13,13 +13,17 @@ class Avatar(Personagem):
         self.defesaBase= self.defesa
         self.set_atk(99)
         self.ataqueBase= self.ataque
-        self.vel= 100
+        self.vel= 80
+        self.atc_indexAgua= 0
+        self.atc_indexAr= 0
+        self.atc_indexTerra= 0
+
     
     def get_imagens(self):
         caminho= os.path.join('imagens', self.tipo)
         animacoes= ['parado.png', 'correndo.png', 'pulando.png',
                     'defesa.png', 'ataque.png', 'ataq_fogo.png',
-                    'ataq_agua.png', 'ataq_ar.png', 'ataq_terra.png'
+                    'ataq_agua.png', 'ataq_ar.png', 'ataq_terra.png',
                     'pulando.png']
         
         pers_list = [pg.image.load(os.path.join(caminho, img)) for img in animacoes]
@@ -87,6 +91,21 @@ class Avatar(Personagem):
             myself_im= mydic['defesa'][self.img_index]
             self.mov='s'
 
+
+        if self.y != self.rect.y:
+            self.rect.y += 10
+            if self.y - self.rect.y > 25:
+                if self.img_index >= len(mydic['pulo']):
+                    self.img_index = 0
+                myself_im = mydic['pulo'][self.img_index]
+
+        if tecla[pg.K_w]  and self.rect.top > 0:
+            self.img_index = 0
+            myself_im = mydic['pulo'][self.img_index]
+            self.rect.y -= 30
+            self.mov='w'
+
+
         #Ajustes para sair a animação completa do ataque
         if self.atc_index != 0:
             if self.atc_index <len(mydic['ataque']):
@@ -99,42 +118,63 @@ class Avatar(Personagem):
             self.atc_index= 1
             myself_im= mydic['ataque'][self.atc_index]
             self.mov='h'
-
-            # if self.rect.centerx < oponente.rect.centerx:
-            #     ataque= pg.Rect((self.rect.right, self.rect.y, 70, 180))
-            # else:
-            #     ataque= pg.Rect((self.rect.left-80, self.rect.y, 70, 180))
-            
-            # if ataque.colliderect(oponente.rect) and oponente.atc_index== 0:
-            #     oponente.vida-=self.atk()
         
         #Ajuste para sair as animações completas de habilidades
         if self.atc_index2 != 0:
-            if self.atc_index2 <len(mydic['ataque2']):
-                myself_im= mydic['ataque2'][self.atc_index2]
+            if self.atc_index2 <len(mydic['fogo']):
+                myself_im= mydic['fogo'][self.atc_index2]
                 self.atc_index2+=1
             else:
                 self.atc_index2=0
             
-        #habilidade1    
-        if tecla[pg.K_j] and self.atc_index2== 0  and self.cont_h1<4:
+        # Habilidade de fogo    
+        if tecla[pg.K_LEFT] and self.atc_index2== 0:
             self.atc_index2=1
-            self.cont_h1+=1
-            myself_im= mydic['ataque2'][self.atc_index2]
-            self.mov='j'
+            myself_im= mydic['fogo'][self.atc_index2]
+            self.mov='l'
 
-            # if self.rect.centerx < oponente.rect.centerx:
-            #     ataque= pg.Rect((self.rect.right, self.rect.y, 200, 180))
-            # else:
-            #     ataque= pg.Rect((self.rect.left-150, self.rect.y, 200, 180))
+        if self.atc_indexAgua != 0:
+            if self.atc_indexAgua <len(mydic['agua']):
+                myself_im= mydic['agua'][self.atc_indexAgua]
+                self.atc_indexAgua+=1
+            else:
+                self.atc_indexAgua=0
             
-            # if ataque.colliderect(oponente.rect) and oponente.atc_index== 0:
-            #     oponente.vida-=self.habilidade1()
+        # Habilidade de agua    
+        if tecla[pg.K_RIGHT] and self.atc_indexAgua== 0:
+            self.atc_indexAgua=1
+            myself_im= mydic['agua'][self.atc_indexAgua]
+            self.mov='r'
+
+        if self.atc_indexTerra != 0:
+            if self.atc_indexTerra <len(mydic['terra']):
+                myself_im= mydic['terra'][self.atc_indexTerra]
+                self.atc_indexTerra+=1
+            else:
+                self.atc_indexTerra=0
+            
+        # Habilidade de terra    
+        if tecla[pg.K_DOWN] and self.atc_indexTerra== 0:
+            self.atc_indexTerra=1
+            myself_im= mydic['terra'][self.atc_indexTerra]
+            self.mov='c'
+
+        if self.atc_indexAr != 0:
+            if self.atc_indexAr <len(mydic['ar']):
+                myself_im= mydic['ar'][self.atc_indexAr]
+                self.atc_indexAr+=1
+            else:
+                self.atc_indexAr=0
+            
+        # Habilidade de ar    
+        if tecla[pg.K_UP] and self.atc_indexAr== 0:
+            self.atc_indexAr=1
+            myself_im= mydic['ar'][self.atc_indexAr]
+            self.mov='t'
 
         #habilidade2
-        if tecla[pg.K_k] and self.cont_h2<3:
+        if tecla[pg.K_k] and self.cont_h2<1:
             self.habilidade2()
-            self.cont_h2+=1
             self.mov='k'
     
         '''esse trecho garante que os oersonagens irão ficar um de frente para o outro
@@ -158,7 +198,11 @@ class Avatar(Personagem):
     def ataq_terra(self):
         return self.ataque * 1.05
 
-    def caminhos(self):
+    def habilidade2(self):
         self.set_vida(1500)
         self.set_def(1500)
         self.set_atk(999)
+
+
+# boc= Avatar()
+# print(boc)

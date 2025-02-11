@@ -24,7 +24,7 @@ class Personagem:
         self.atc_index2 = 0  # Índice para animação de habilidades
         self.y = self.rect.y  # Posição Y inicial
         self.x= self.rect.x # Posição X inicial
-        self.mov= 'p' # Indica o último movimento realizado
+        self.mov= 'p' # Indica o último movimento realizado/default= parado
     
     '''encontra as imagens que serão usadas e as coloca em uma lista.
     As imagens serão recortadas e usadas futuramente na função imagens(),
@@ -292,6 +292,87 @@ class Personagem:
         if oponente.mov == 'k' and oponente.cont_h2 < 3:
             oponente.habilidade2()
             oponente.cont_h2 += 1
+
+        if oponente.tipo=='avatar' and oponente.mov=='l':
+            if oponente.atc_index2==0:
+                oponente.atc_index2= 1
+                
+            if oponente.atc_index2 < len(dic_op['fogo']):
+                    op_img = dic_op['fogo'][oponente.atc_index2]
+                    oponente.atc_index2 += 1
+            else:
+                    oponente.atc_index2 = 0
+            if self.rect.centerx > oponente.rect.centerx:
+                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+            else:
+                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                
+            if ataque.colliderect(self.rect):
+                if self.mov=='s':
+                    self.set_vida(self.vida - (oponente.ataq_fogo() - self.defense()))
+                else:
+                    self.vida-=oponente.ataq_fogo()
+
+        if oponente.tipo=='avatar' and oponente.mov=='r':
+            if oponente.atc_indexAgua==0:
+                oponente.atc_index2= 1
+                
+            if oponente.atc_index2 < len(dic_op['agua']):
+                    op_img = dic_op['agua'][oponente.atc_indexAgua]
+                    oponente.atc_indexAgua += 1
+            else:
+                    oponente.atc_indexAgua = 0
+            if self.rect.centerx > oponente.rect.centerx:
+                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+            else:
+                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                
+            if ataque.colliderect(self.rect):
+                if self.mov=='s':
+                    self.set_vida(self.vida - (oponente.ataq_agua() - self.defense()))
+                else:
+                    self.vida-=oponente.ataq_agua()
+
+        if oponente.tipo=='avatar' and oponente.mov=='c':
+            if oponente.atc_indexTerra==0:
+                oponente.atc_indexTerra= 1
+                
+            if oponente.atc_indexTerra < len(dic_op['terra']):
+                    op_img = dic_op['fogo'][oponente.atc_indexTerra]
+                    oponente.atc_indexTerra += 1
+            else:
+                    oponente.atc_indexTerra = 0
+            if self.rect.centerx > oponente.rect.centerx:
+                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+            else:
+                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                
+            if ataque.colliderect(self.rect):
+                if self.mov=='s':
+                    self.set_vida(self.vida - (oponente.ataq_terra() - self.defense()))
+                else:
+                    self.vida-=oponente.ataq_terra()
+        
+        if oponente.tipo=='avatar' and oponente.mov=='t':
+            if oponente.atc_indexAr==0:
+                oponente.atc_indexAr= 1
+                
+            if oponente.atc_indexAr < len(dic_op['ar']):
+                    op_img = dic_op['ar'][oponente.atc_indexAr]
+                    oponente.atc_indexAr += 1
+            else:
+                    oponente.atc_indexAr = 0
+            if self.rect.centerx > oponente.rect.centerx:
+                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+            else:
+                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                
+            if ataque.colliderect(self.rect):
+                if self.mov=='s':
+                    self.set_vida(self.vida - (oponente.ataq_ar() - self.defense()))
+                else:
+                    self.vida-=oponente.ataq_ar()
+        
 
         # Garante que os personagens fiquem de frente um para o outro
         if oponente.rect.centerx > self.rect.centerx:

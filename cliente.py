@@ -134,7 +134,7 @@ def tela_win():
         txt = fonte.render("You win!!!", True, (0,0,0))
         # print('vitoria!')
     
-    tela.blit(txt, (342, tela.get_height()/2))
+    tela.blit(txt, (tela.get_width()/2 - txt.get_width()/2, tela.get_height()/2))
     tela_atual= 'win'
     pg.display.update()
     
@@ -238,9 +238,9 @@ def loop():
                         elif select == 'earth':
                             from elementos.earth import Terra
                             host = Terra(nome if nome else 'client')
-                        if nome == 'Aang':
+                        if nome == 'Aang' or host.nome =='Aang':
                             from elementos.avatar import Avatar
-                            host = Avatar(nome if nome else 'client')
+                            host = Avatar('Avatar - gg')
                         # Muda para tela de combate
                         if oponente is not None:
                             tela_atual = 'combate'
