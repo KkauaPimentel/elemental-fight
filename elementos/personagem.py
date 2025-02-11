@@ -241,8 +241,7 @@ class Personagem:
         if oponente.mov == 's':
             oponente.img_index = 0
             op_img = dic_op['defesa'][oponente.img_index]
-            if (self.atc_index != 0 or self.atc_index2!= 0):
-                oponente.vida-= self.atk() - oponente.defesa()
+            
 
         # Ataque normal
         if oponente.mov == 'h':
@@ -261,7 +260,10 @@ class Personagem:
                 ataque= pg.Rect((oponente.rect.left-55, oponente.rect.y, 70, 180))
             
             if ataque.colliderect(self.rect):
-                self.vida-=oponente.atk()
+                if self.mov=='s':
+                    self.set_vida(self.vida - (oponente.atk() - self.defense()))
+                else:
+                    self.vida-=oponente.atk()
         
 
         # Habilidade 1
@@ -281,7 +283,10 @@ class Personagem:
                 ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
                 
             if ataque.colliderect(self.rect):
-                self.vida-=oponente.habilidade1()
+                if self.mov=='s':
+                    self.set_vida(self.vida - (oponente.habilidade1() - self.defense()))
+                else:
+                    self.vida-=oponente.habilidade1()
 
         # Habilidade 2
         if oponente.mov == 'k' and oponente.cont_h2 < 3:
