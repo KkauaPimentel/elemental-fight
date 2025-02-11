@@ -13,7 +13,7 @@ class Avatar(Personagem):
         self.defesaBase= self.defesa
         self.set_atk(99)
         self.ataqueBase= self.ataque
-        self.vel= 80
+        self.vel= 70
         self.atc_indexAgua= 0
         self.atc_indexAr= 0
         self.atc_indexTerra= 0
@@ -93,7 +93,7 @@ class Avatar(Personagem):
 
 
         if self.y != self.rect.y:
-            self.rect.y += 10
+            self.rect.y += 20
             if self.y - self.rect.y > 25:
                 if self.img_index >= len(mydic['pulo']):
                     self.img_index = 0
@@ -102,7 +102,7 @@ class Avatar(Personagem):
         if tecla[pg.K_w]  and self.rect.top > 0:
             self.img_index = 0
             myself_im = mydic['pulo'][self.img_index]
-            self.rect.y -= 30
+            self.rect.y -= 50
             self.mov='w'
 
 

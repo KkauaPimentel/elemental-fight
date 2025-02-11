@@ -37,7 +37,29 @@ def handle_client(conn, player):
     conn.close()
     print(f"Cliente {player} desconectado.")
 
+def udp_discovery():
+    """
+    Serviço UDP para descoberta automática do servidor.
+    Fica escutando na porta 9000 por mensagens 'DISCOVER_SERVER'
+    e responde com 'SERVER_HERE'.
+    """
+    UDP_IP = "0.0.0.0"
+    UDP_PORT = 9000  # Porta para descoberta
+    udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_sock.bind((UDP_IP, UDP_PORT))
+    print("Serviço UDP de descoberta iniciado na porta", UDP_PORT)
+    while True:
+        try:
+            data, addr = udp_sock.recvfrom(1024)
+            if data.decode().strip() == "DISCOVER_SERVER":
+                udp_sock.sendto("SERVER_HERE".encode(), addr)
+        except Exception as e:
+            print("Erro no serviço UDP:", e)
+
 def main():
+    # Inicia o serviço de descoberta UDP em uma thread separada
+    threading.Thread(target=udp_discovery, daemon=True).start()
+    
     server_ip = "0.0.0.0"
     server_port = 8000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -54,7 +76,7 @@ def main():
         threading.Thread(target=handle_client, args=(conn, player), daemon=True).start()
         player += 1
     s.close()
-    # O servidor não termina aqui (ou pode ficar num loop infinito se desejar)
+    # Permanece ativo
     while True:
         pass
 

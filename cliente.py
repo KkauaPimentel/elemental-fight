@@ -7,9 +7,37 @@ from botao import Botao
 
 
 # --- Conexão com o servidor ---
-IP, port = "127.0.0.1", 8000
+
+def discover_server():
+    UDP_IP = "<broadcast>"
+    UDP_PORT = 9000
+    udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    udp_sock.settimeout(5)  # Timeout de 5 segundos
+    try:
+        udp_sock.sendto("DISCOVER_SERVER".encode(), (UDP_IP, UDP_PORT))
+        data, addr = udp_sock.recvfrom(1024)
+        if data.decode().strip() == "SERVER_HERE":
+            print("Servidor encontrado em:", addr[0])
+            return addr[0]
+    except Exception as e:
+        print("Servidor não encontrado:", e)
+    return None
+
+# Use a função para descobrir o servidor
+server_ip = discover_server()
+if server_ip is None:
+    print("Não foi possível encontrar o servidor na rede.")
+    exit(1)
+
+
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((IP, port))
+client.connect((server_ip, 8000))
+
+
+# IP, port = "127.0.0.1", 8000
+# client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# client.connect((IP, port))
 
 # --- Parâmetros da janela e assets ---
 tela_larg, tela_alt = 1000, 640

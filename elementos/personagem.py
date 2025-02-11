@@ -214,10 +214,20 @@ class Personagem:
         opVel = oponente.get_vel()
 
         # Se nenhum movimento específico, use a animação 'parado'
+        
         op_img = dic_op['parado'][oponente.img_index]
         oponente.img_index += 1
         if oponente.img_index >= len(dic_op['parado']):
             oponente.img_index = 0
+
+        if oponente.rect.y<527 and oponente.tipo=='avatar':
+            # if oponente.tipo=='avatar' and oponente.mov=='w':
+            if oponente.img_index >= len(dic_op['pulo']):
+                oponente.img_index = 0
+            op_img = dic_op['pulo'][oponente.img_index]
+            # oponente.rect.x += opVel
+            # if oponente.rect.right > tela.get_width():
+            #     oponente.rect.x = tela.get_width() - 25
 
         # Movimento para a esquerda
         if oponente.mov == 'a':
@@ -312,6 +322,7 @@ class Personagem:
                     self.set_vida(self.vida - (oponente.ataq_fogo() - self.defense()))
                 else:
                     self.vida-=oponente.ataq_fogo()
+
 
         if oponente.tipo=='avatar' and oponente.mov=='r':
             if oponente.atc_indexAgua==0:
