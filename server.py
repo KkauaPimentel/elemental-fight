@@ -38,7 +38,7 @@ def handle_client(conn, player):
     print(f"Cliente {player} desconectado.")
 
 def main():
-    server_ip = "127.0.0.1"
+    server_ip = "0.0.0.0"
     server_port = 8000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((server_ip, server_port))
