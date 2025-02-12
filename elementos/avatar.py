@@ -94,6 +94,8 @@ class Avatar(Personagem):
 
         if self.y != self.rect.y:
             self.rect.y += 20
+            if self.rect.y>=530:
+                self.rect.y= 530
             if self.y - self.rect.y > 25:
                 if self.img_index >= len(mydic['pulo']):
                     self.img_index = 0

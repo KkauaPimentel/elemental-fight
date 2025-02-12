@@ -77,16 +77,33 @@ def background(img):
 # --- Telas ---
 def tela_espera():
     background(img_selec)
-    # Fontes usadas na espera de tela
-    fonte = pg.font.SysFont('comicsans', 65)
+    # Fontes usadas na tela
+    fonte1 = pg.font.SysFont('comicsans', 65)
     fonte2 = pg.font.SysFont('comicsans', 63)
-    # Textos em si
-    texto = fonte.render("Esperando oponente...", True, (0,0,0))
+    fonte3 = pg.font.SysFont('arial', 40)
+    
+    # Textos principais
+    texto = fonte1.render("Esperando oponente...", True, (0,0,0))
     texto2 = fonte2.render("Esperando oponente...", True, (255,255,255))
-    # Inserção de texto
+    
+    # Texto da legenda da caixa de digitação
+    texto_legenda = fonte3.render("Digite o IP do servidor:", True, (200,200,200))
+    
+    # Desenha os textos de espera
     tela.blit(texto, (tela_larg/2 - texto.get_width()/2, tela_alt/2 - texto.get_height()/2))
     tela.blit(texto2, (tela_larg/2 - texto2.get_width()/2, tela_alt/2 - texto2.get_height()/2))
-    # Atualização da tela com os textos
+    
+    # Desenha a caixa de digitação (com borda preta e fundo verde claro)
+    pg.draw.rect(tela, (0,0,0), (444, 495, 330, 60))
+    pg.draw.rect(tela, (200,255,200), (450, 500, 316, 50))
+    
+    # Insere a legenda na caixa (lado esquerdo)
+    tela.blit(texto_legenda, (16, 510))
+    
+    # Exibe o IP digitado até o momento
+    ip_text = fonte3.render(server_ip, True, (0,0,0))
+    tela.blit(ip_text, (460, 510))
+    
     pg.display.update()
 
 def tela_selecao():
