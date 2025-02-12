@@ -6,8 +6,6 @@ import threading
 from botao import Botao
 
 
-# --- Conexão com o servidor ---
-
 def discover_server():
     UDP_IP = "<broadcast>"
     UDP_PORT = 9000
@@ -24,16 +22,14 @@ def discover_server():
         print("Servidor não encontrado:", e)
     return None
 
-# Use a função para descobrir o servidor
 server_ip = discover_server()
 if server_ip is None:
     print("Não foi possível encontrar o servidor na rede.")
     exit(1)
 
-
+# --- Conexão TCP com o Servidor ---
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((server_ip, 8000))
-
 
 # IP, port = "127.0.0.1", 8000
 # client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

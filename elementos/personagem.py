@@ -225,9 +225,6 @@ class Personagem:
             if oponente.img_index >= len(dic_op['pulo']):
                 oponente.img_index = 0
             op_img = dic_op['pulo'][oponente.img_index]
-            # oponente.rect.x += opVel
-            # if oponente.rect.right > tela.get_width():
-            #     oponente.rect.x = tela.get_width() - 25
 
         # Movimento para a esquerda
         if oponente.mov == 'a':

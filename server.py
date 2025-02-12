@@ -17,19 +17,18 @@ def handle_client(conn, player):
             data_bytes = conn.recv(4096)
             if not data_bytes:
                 break
-            # Tenta desserializar o dado recebido
-            msg = pickle.loads(data_bytes)  # msg é uma tupla: (objeto, flag)
+            # Desserializa a mensagem (espera-se uma tupla: (objeto, flag))
+            msg = pickle.loads(data_bytes)
             with lock:
                 if player == 1:
                     state1 = msg
                 else:
                     state2 = msg
-                # Para cada cliente, o estado enviado é o do oponente:
+                # Envia para cada cliente o estado do oponente
                 if player == 1:
                     opponent_state = state2
                 else:
                     opponent_state = state1
-            # Envia o estado do oponente
             conn.sendall(pickle.dumps(opponent_state))
         except Exception as e:
             print(f"Erro no handle_client (player {player}):", e)
@@ -40,11 +39,10 @@ def handle_client(conn, player):
 def udp_discovery():
     """
     Serviço UDP para descoberta automática do servidor.
-    Fica escutando na porta 9000 por mensagens 'DISCOVER_SERVER'
-    e responde com 'SERVER_HERE'.
+    Escuta na porta 9000 por mensagens 'DISCOVER_SERVER' e responde com 'SERVER_HERE'.
     """
     UDP_IP = "0.0.0.0"
-    UDP_PORT = 9000  # Porta para descoberta
+    UDP_PORT = 9000
     udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_sock.bind((UDP_IP, UDP_PORT))
     print("Serviço UDP de descoberta iniciado na porta", UDP_PORT)
@@ -57,7 +55,7 @@ def udp_discovery():
             print("Erro no serviço UDP:", e)
 
 def main():
-    # Inicia o serviço de descoberta UDP em uma thread separada
+    # Inicia a thread de descoberta UDP
     threading.Thread(target=udp_discovery, daemon=True).start()
     
     server_ip = "0.0.0.0"
@@ -76,7 +74,6 @@ def main():
         threading.Thread(target=handle_client, args=(conn, player), daemon=True).start()
         player += 1
     s.close()
-    # Permanece ativo
     while True:
         pass
 
