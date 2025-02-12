@@ -22,16 +22,78 @@ def discover_server():
         print("Server não encontrado:", e)
     return None
 
-client_teste= ''
-server_ip = discover_server()
+client_teste= ""
+server_ip = None
 
-if server_ip is None:
-    print("Não foi possível encontrar o servidor na rede.")
+def background(img):
+    img_ajust = pg.transform.scale(img, (tela_larg, tela_alt))
+    tela.blit(img_ajust, (0,0))
+
+
+def tela_espera():
+    background(img_selec)
+    # Fontes usadas na tela
+    fonte1 = pg.font.SysFont('comicsans', 65)
+    fonte2 = pg.font.SysFont('comicsans', 63)
+    fonte3 = pg.font.SysFont('arial', 40)
+    
+    # Textos principais
+    texto = fonte1.render("Esperando oponente...", True, (0,0,0))
+    texto2 = fonte2.render("Esperando oponente...", True, (255,255,255))
+    
+    # Texto da legenda da caixa de digitação
+    texto_legenda = fonte3.render("Digite o IP do servidor:", True, (200,200,200))
+    
+    # Desenha os textos de espera
+    tela.blit(texto, (tela_larg/2 - texto.get_width()/2, tela_alt/2 - texto.get_height()/2))
+    tela.blit(texto2, (tela_larg/2 - texto2.get_width()/2, tela_alt/2 - texto2.get_height()/2))
+    
+    # Desenha a caixa de digitação (com borda preta e fundo verde claro)
+    pg.draw.rect(tela, (0,0,0), (444, 495, 330, 60))
+    pg.draw.rect(tela, (200,255,200), (450, 500, 316, 50))
+    
+    # Insere a legenda na caixa (lado esquerdo)
+    tela.blit(texto_legenda, (16, 510))
+    
+    # Exibe o IP digitado até o momento
+    ip_text = fonte3.render(client_teste, True, (0,0,0))
+    tela.blit(ip_text, (460, 510))
+    
+    pg.display.update()
+
+
+# if server_ip is None:
+#     print("Não foi possível encontrar o servidor na rede.")
+#     run= True
+#     while run:
+#         tela_espera()
+#         for event in pg.event.get():
+#             if event.type == pg.QUIT:
+#                 run = False
+#                 break
+#             # Captura do teclado
+#             if event.type == pg.KEYDOWN:
+#                 # Se host tecla x, fecha 
+#                 if event.key == pg.K_x:
+#                     run = False
+#                     break
+#                 if event.key == pg.K_BACKSPACE:
+#                         client_teste = client_teste[:-1]
+#                     # Se apertar enter, envia suas escolhas e flags pro oponente e aguarda as seleções dele
+#                 elif event.key == pg.K_RETURN and tela_atual=='espera':
+#                     print(f'IP digitado: {client_teste}')
+#                     server_ip= client_teste
+#                 else:
+#                     if len(nome) < 12:
+#                         client_teste += event.unicode
+
+            
+    # server_ip= client_teste
     # exit(1)
 
 # --- Conexão TCP com o Servidor ---
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((server_ip, 8000))
+# client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# client.connect((server_ip, 8000))
 
 # IP, port = "127.0.0.1", 8000
 # client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -65,6 +127,37 @@ Se flag == True and oponente is not None, o oponente já escolheu.
 No começo, ambos estão (None, False)
 '''
 
+if server_ip is None:
+    print("Não foi possível encontrar o servidor na rede.")
+    run= True
+    while run:
+        tela_espera()
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                run = False
+                break
+            # Captura do teclado
+            if event.type == pg.KEYDOWN:
+                # Se host tecla x, fecha 
+                if event.key == pg.K_x:
+                    run = False
+                    break
+                if event.key == pg.K_BACKSPACE:
+                        client_teste = client_teste[:-1]
+                    # Se apertar enter, envia suas escolhas e flags pro oponente e aguarda as seleções dele
+                elif event.key == pg.K_RETURN and tela_atual=='espera':
+                    print(f'IP digitado: {client_teste}')
+                    server_ip= client_teste
+                    run= False
+                    break
+                else:
+                    if len(nome) < 12:
+                        client_teste += event.unicode
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((server_ip, 8000))
+
+
 # --- Botões de escolha dos elementos ---
 botoes = [
     Botao("water", 250, 200, (255,255,255), (0,0,0)),
@@ -75,41 +168,41 @@ botoes = [
 ]
 
 # --- Função que insere o fundo de tela ---
-def background(img):
-    img_ajust = pg.transform.scale(img, (tela_larg, tela_alt))
-    tela.blit(img_ajust, (0,0))
+# def background(img):
+#     img_ajust = pg.transform.scale(img, (tela_larg, tela_alt))
+#     tela.blit(img_ajust, (0,0))
 
 # --- Telas ---
-def tela_espera():
-    background(img_selec)
-    # Fontes usadas na tela
-    fonte1 = pg.font.SysFont('comicsans', 65)
-    fonte2 = pg.font.SysFont('comicsans', 63)
-    fonte3 = pg.font.SysFont('arial', 40)
+# def tela_espera():
+#     background(img_selec)
+#     # Fontes usadas na tela
+#     fonte1 = pg.font.SysFont('comicsans', 65)
+#     fonte2 = pg.font.SysFont('comicsans', 63)
+#     fonte3 = pg.font.SysFont('arial', 40)
     
-    # Textos principais
-    texto = fonte1.render("Esperando oponente...", True, (0,0,0))
-    texto2 = fonte2.render("Esperando oponente...", True, (255,255,255))
+#     # Textos principais
+#     texto = fonte1.render("Esperando oponente...", True, (0,0,0))
+#     texto2 = fonte2.render("Esperando oponente...", True, (255,255,255))
     
-    # Texto da legenda da caixa de digitação
-    texto_legenda = fonte3.render("Digite o IP do servidor:", True, (200,200,200))
+#     # Texto da legenda da caixa de digitação
+#     texto_legenda = fonte3.render("Digite o IP do servidor:", True, (200,200,200))
     
-    # Desenha os textos de espera
-    tela.blit(texto, (tela_larg/2 - texto.get_width()/2, tela_alt/2 - texto.get_height()/2))
-    tela.blit(texto2, (tela_larg/2 - texto2.get_width()/2, tela_alt/2 - texto2.get_height()/2))
+#     # Desenha os textos de espera
+#     tela.blit(texto, (tela_larg/2 - texto.get_width()/2, tela_alt/2 - texto.get_height()/2))
+#     tela.blit(texto2, (tela_larg/2 - texto2.get_width()/2, tela_alt/2 - texto2.get_height()/2))
     
-    # Desenha a caixa de digitação (com borda preta e fundo verde claro)
-    pg.draw.rect(tela, (0,0,0), (444, 495, 330, 60))
-    pg.draw.rect(tela, (200,255,200), (450, 500, 316, 50))
+#     # Desenha a caixa de digitação (com borda preta e fundo verde claro)
+#     pg.draw.rect(tela, (0,0,0), (444, 495, 330, 60))
+#     pg.draw.rect(tela, (200,255,200), (450, 500, 316, 50))
     
-    # Insere a legenda na caixa (lado esquerdo)
-    tela.blit(texto_legenda, (16, 510))
+#     # Insere a legenda na caixa (lado esquerdo)
+#     tela.blit(texto_legenda, (16, 510))
     
-    # Exibe o IP digitado até o momento
-    ip_text = fonte3.render(client_teste, True, (0,0,0))
-    tela.blit(ip_text, (460, 510))
+#     # Exibe o IP digitado até o momento
+#     ip_text = fonte3.render(client_teste, True, (0,0,0))
+#     tela.blit(ip_text, (460, 510))
     
-    pg.display.update()
+#     pg.display.update()
 
 def tela_selecao():
     background(img_selec)
@@ -238,15 +331,7 @@ def loop():
                     break
                 # Se estiver na tela de espera e receber uma flag True (do servidor), muda para seleção
                 if tela_atual == 'espera':
-                    # Flag indica que há oponente
-                    if evento.key == pg.K_BACKSPACE:
-                        client_teste = client_teste[:-1]
-                    # Se apertar enter, envia suas escolhas e flags pro oponente e aguarda as seleções dele
-                    elif evento.key == pg.K_RETURN and len(client_teste[:-1]) <13:
-                        client.connect((client_teste, 8000))
-                    else:
-                        if len(client_teste) < 13:
-                            client_teste += evento.unicode
+                    #se tiver oponente, pode mudar de tela
                     if flag== True:
                         tela_atual = 'selecao'
                 if tela_atual == 'combate' and oponente is None:
