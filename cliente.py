@@ -46,8 +46,8 @@ pg.display.set_caption("Elemental Fight")# Nome da janela
 #Imagens usadas no fundo da tela
 img_fundo = pg.image.load(os.path.join('imagens', 'fundo-x1.jpg'))
 img_selec = pg.image.load(os.path.join('imagens', 'fundo-tela.jpg'))
-# img_win = pg.image.load(os.path.join('imagens', 'fundo-win.jpg'))
-# img_lose = pg.image.load(os.path.join('imagens', 'fundo-lose.jpg'))
+img_win = pg.image.load(os.path.join('imagens', 'fundo-win.png'))
+img_lose = pg.image.load(os.path.join('imagens', 'fundo-lose.jpg'))
 
 
 # --- Variáveis globais de jogo ---
@@ -166,25 +166,16 @@ def tela_combat():
     pg.display.update()
 
 def tela_win():
-    tela.fill((0,0,0))
-
-    fonte = pg.font.SysFont('arial', 44)
+    global tela_atual
     
-    pg.draw.rect(tela, (88,0,0), (327, tela.get_height()/2, 316, 50))
-    pg.draw.rect(tela, (200,200,200), (337, tela.get_height()/2, 300, 40))
-
-    if host.vida<1:
-        txt = fonte.render("You lose...", True, (0,0,0))
-        # print("derrota!")
-    else:
-        txt = fonte.render("You win!!!", True, (0,0,0))
-        # print('vitoria!')
+    if host.vida<1:# Quer dizer que perdeu
+        background(img_lose)
+    else:# Quer dizer que ganhou
+        background(img_win)
     
-    tela.blit(txt, (tela.get_width()/2 - txt.get_width()/2, tela.get_height()/2))
+    # Garantir permanencia na tela de win
     tela_atual= 'win'
     pg.display.update()
-    
-    
 
 
 # --- Thread de comunicação ---

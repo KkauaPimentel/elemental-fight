@@ -25,6 +25,7 @@ class Personagem:
         self.y = self.rect.y  # Posição Y inicial
         self.x= self.rect.x # Posição X inicial
         self.mov= 'p' # Indica o último movimento realizado/default= parado
+        self.jump= False
     
     '''encontra as imagens que serão usadas e as coloca em uma lista.
     As imagens serão recortadas e usadas futuramente na função imagens(),
@@ -56,85 +57,119 @@ class Personagem:
     #função que fará as animações/interações do personagem/host de acordo com as teclas pressionadas 
     def desenhar(self, tela, mydic, oponente):
         vel= self.vel
-        
-        #se nada for pressionado, só roda a animação de parado
+
+
         myself_im= mydic['parado'][self.img_index]
         self.img_index+=1
         if self.img_index>= len(mydic['parado']):
             self.img_index= 0
-        self.mov='p'
+        self.mov='p'        
         #Inicia a captura de teclas pressionadas
         tecla= pg.key.get_pressed()
 
-        #fecha a janela se x for pressionado
-        if tecla[pg.K_x]:
-            pg.quit()
-        #Esquerda
-        if tecla[pg.K_a]:
-            if self.img_index >= len(mydic['correndo']):
-                self.img_index= 0
-            myself_im= mydic['correndo'][self.img_index]
-            self.rect.x-= vel
-            if self.rect.left<0:
-                self.rect.x=0
-            self.mov='a'
-        #Direita
-        if tecla[pg.K_d]:
-            if self.img_index >= len(mydic['correndo']):
-                self.img_index= 0
-            myself_im= mydic['correndo'][self.img_index]
-            self.rect.x+= vel
-            if self.rect.right>tela.get_width():
-                self.rect.x=tela.get_width() - 25
-            self.mov='d'
-        #Defesa
-        if tecla[pg.K_s]:
-            self.img_index=0
-            myself_im= mydic['defesa'][self.img_index]
-            self.mov='s'
+        if tecla[pg.K_w] and self.jump== False:
+            if self.rect.y < 390:
+                pass
+            else:
+                self.jump= True
+                if self.img_index == 0:
+                    self.img_index = 1
+                if self.img_index >= len(mydic['pulando']):
+                    self.img_index = 0
+                myself_im= mydic['pulando'][self.img_index]
+                self.rect.y-= 200
 
-        #Ajustes para sair a animação completa do ataque
-        if self.atc_index != 0:
-            if self.atc_index <len(mydic['ataque']):
+        else:
+
+            if self.rect.y<530:
+                self.rect.y+= 65
+            else:
+                self.rect.y=530
+                self.jump= False
+
+            #se nada for pressionado, só roda a animação de parado
+            myself_im= mydic['parado'][self.img_index]
+            self.img_index+=1
+            if self.img_index>= len(mydic['parado']):
+                self.img_index= 0
+            self.mov='p'
+
+            if self.rect.y<530:
+                if self.img_index == 0:
+                    self.img_index = 1
+                if self.img_index >= len(mydic['pulando']):
+                    self.img_index = 0
+                myself_im= mydic['pulando'][self.img_index]
+
+            #fecha a janela se x for pressionado
+            if tecla[pg.K_x]:
+                pg.quit()
+            #Esquerda
+            if tecla[pg.K_a]:
+                if self.img_index >= len(mydic['correndo']):
+                    self.img_index= 0
+                myself_im= mydic['correndo'][self.img_index]
+                self.rect.x-= vel
+                if self.rect.left<0:
+                    self.rect.x=0
+                self.mov='a'
+            #Direita
+            if tecla[pg.K_d]:
+                if self.img_index >= len(mydic['correndo']):
+                    self.img_index= 0
+                myself_im= mydic['correndo'][self.img_index]
+                self.rect.x+= vel
+                if self.rect.right>tela.get_width():
+                    self.rect.x=tela.get_width() - 25
+                self.mov='d'
+            #Defesa
+            if tecla[pg.K_s]:
+                self.img_index=0
+                myself_im= mydic['defesa'][self.img_index]
+                self.mov='s'
+
+            #Ajustes para sair a animação completa do ataque
+            if self.atc_index != 0:
+                if self.atc_index <len(mydic['ataque']):
+                    myself_im= mydic['ataque'][self.atc_index]
+                    self.atc_index+=1
+                else:
+                    self.atc_index=0
+            #ataque normal
+            if tecla[pg.K_h] and self.atc_index==0:
+                self.atc_index= 1
                 myself_im= mydic['ataque'][self.atc_index]
-                self.atc_index+=1
-            else:
-                self.atc_index=0
-        #ataque normal
-        if tecla[pg.K_h] and self.atc_index==0:
-            self.atc_index= 1
-            myself_im= mydic['ataque'][self.atc_index]
-            self.mov='h'
-        
-        #Ajuste para sair as animações completas de habilidades
-        if self.atc_index2 != 0:
-            if self.atc_index2 <len(mydic['ataque2']):
+                self.mov='h'
+            
+            #Ajuste para sair as animações completas de habilidades
+            if self.atc_index2 != 0:
+                if self.atc_index2 <len(mydic['ataque2']):
+                    myself_im= mydic['ataque2'][self.atc_index2]
+                    self.atc_index2+=1
+                else:
+                    self.atc_index2=0
+                
+            #habilidade1    
+            if tecla[pg.K_j] and self.atc_index2== 0  and self.cont_h1<4:
+                self.atc_index2=1
+                self.cont_h1+=1
                 myself_im= mydic['ataque2'][self.atc_index2]
-                self.atc_index2+=1
-            else:
-                self.atc_index2=0
-            
-        #habilidade1    
-        if tecla[pg.K_j] and self.atc_index2== 0  and self.cont_h1<4:
-            self.atc_index2=1
-            self.cont_h1+=1
-            myself_im= mydic['ataque2'][self.atc_index2]
-            self.mov='j'
+                self.mov='j'
 
-            if self.rect.centerx < oponente.rect.centerx:
-                ataque= pg.Rect((self.rect.right, self.rect.y, 200, 180))
-            else:
-                ataque= pg.Rect((self.rect.left-150, self.rect.y, 200, 180))
-            
-            if ataque.colliderect(oponente.rect) and oponente.atc_index== 0:
-                oponente.vida-=self.habilidade1()
+                if self.rect.centerx < oponente.rect.centerx:
+                    ataque= pg.Rect((self.rect.right, self.rect.y, 200, 180))
+                else:
+                    ataque= pg.Rect((self.rect.left-150, self.rect.y, 200, 180))
+                
+                if ataque.colliderect(oponente.rect) and oponente.atc_index== 0:
+                    oponente.vida-=self.habilidade1()
 
-        #habilidade2
-        if tecla[pg.K_k] and self.cont_h2<3:
-            self.habilidade2()
-            self.cont_h2+=1
-            self.mov='k'
-    
+            #habilidade2
+            if tecla[pg.K_k] and self.cont_h2<3:
+                self.habilidade2()
+                self.cont_h2+=1
+                self.mov='k'
+        
         '''esse trecho garante que os oersonagens irão ficar um de frente para o outro
         caso não estejam, inverte a imagem. Insere os personagens em tela com blit'''
         if self.rect.centerx> oponente.rect.centerx:
