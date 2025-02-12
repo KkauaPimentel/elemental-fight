@@ -13,19 +13,21 @@ def discover_server():
     udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     udp_sock.settimeout(5)  # Timeout de 5 segundos
     try:
-        udp_sock.sendto("DISCOVER_SERVER".encode(), (UDP_IP, UDP_PORT))
+        udp_sock.sendto("caca_server".encode(), (UDP_IP, UDP_PORT))
         data, addr = udp_sock.recvfrom(1024)
-        if data.decode().strip() == "SERVER_HERE":
-            print("Servidor encontrado em:", addr[0])
+        if data.decode().strip() == "aqui_estou":
+            print("Server encontrado em:", addr[0])
             return addr[0]
     except Exception as e:
-        print("Servidor não encontrado:", e)
+        print("Server não encontrado:", e)
     return None
 
+client_teste= ''
 server_ip = discover_server()
+
 if server_ip is None:
     print("Não foi possível encontrar o servidor na rede.")
-    exit(1)
+    # exit(1)
 
 # --- Conexão TCP com o Servidor ---
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,6 +46,9 @@ pg.display.set_caption("Elemental Fight")# Nome da janela
 #Imagens usadas no fundo da tela
 img_fundo = pg.image.load(os.path.join('imagens', 'fundo-x1.jpg'))
 img_selec = pg.image.load(os.path.join('imagens', 'fundo-tela.jpg'))
+# img_win = pg.image.load(os.path.join('imagens', 'fundo-win.jpg'))
+# img_lose = pg.image.load(os.path.join('imagens', 'fundo-lose.jpg'))
+
 
 # --- Variáveis globais de jogo ---
 nome = ''#Nome do personagem
@@ -101,7 +106,7 @@ def tela_espera():
     tela.blit(texto_legenda, (16, 510))
     
     # Exibe o IP digitado até o momento
-    ip_text = fonte3.render(server_ip, True, (0,0,0))
+    ip_text = fonte3.render(client_teste, True, (0,0,0))
     tela.blit(ip_text, (460, 510))
     
     pg.display.update()
@@ -138,7 +143,7 @@ def tela_selecao():
     pg.display.update()
 
 def tela_combat():
-    global host, oponente
+    global host, oponente, tela_atual
 
     background(img_fundo)
     if oponente is not None:
@@ -185,8 +190,8 @@ def tela_win():
 # --- Thread de comunicação ---
 def comunicacao():
     """
-    Este loop envia periodicamente as decisões do cliente para o servidor e recebe do servidor
-    uma tupla (oponente_obj, flag) do oponente
+    Este loop envia periodicamente as escolhas do cliente para o servidor e recebe do servidor
+    uma tupla (obj, flag) do oponente.
     """
     global host, oponente, flag, flag_host
     while True:
@@ -197,7 +202,6 @@ def comunicacao():
             Se ainda não escolheu ser personagem, envia novamente (None, True), na tela de seleção
             Se o host escolheu, envia (objt_host, True)
             '''
-
             if host is None:
                 msg = (None, True)
             else:
@@ -224,7 +228,7 @@ print("Thread de comunicação iniciada")
 
 # --- Loop principal ---
 def loop():
-    global tela_atual, nome, select, host, flag
+    global tela_atual, nome, select, host, flag, client_teste
 
     run = True
 
@@ -244,6 +248,14 @@ def loop():
                 # Se estiver na tela de espera e receber uma flag True (do servidor), muda para seleção
                 if tela_atual == 'espera':
                     # Flag indica que há oponente
+                    if evento.key == pg.K_BACKSPACE:
+                        client_teste = client_teste[:-1]
+                    # Se apertar enter, envia suas escolhas e flags pro oponente e aguarda as seleções dele
+                    elif evento.key == pg.K_RETURN and len(client_teste[:-1]) <13:
+                        client.connect((client_teste, 8000))
+                    else:
+                        if len(client_teste) < 13:
+                            client_teste += evento.unicode
                     if flag== True:
                         tela_atual = 'selecao'
                 if tela_atual == 'combate' and oponente is None:

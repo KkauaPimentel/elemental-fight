@@ -176,7 +176,7 @@ class Avatar(Personagem):
 
         #habilidade2
         if tecla[pg.K_k] and self.cont_h2<1:
-            self.habilidade2()
+            self.caminhos()
             self.mov='k'
     
         '''esse trecho garante que os oersonagens irão ficar um de frente para o outro
@@ -200,7 +200,7 @@ class Avatar(Personagem):
     def ataq_terra(self):
         return self.ataque * 1.05
 
-    def habilidade2(self):
+    def caminhos(self):
         self.set_vida(1500)
         self.set_def(1500)
         self.set_atk(999)

@@ -49,8 +49,8 @@ def udp_discovery():
     while True:
         try:
             data, addr = udp_sock.recvfrom(1024)
-            if data.decode().strip() == "DISCOVER_SERVER":
-                udp_sock.sendto("SERVER_HERE".encode(), addr)
+            if data.decode().strip() == "caca_server":
+                udp_sock.sendto("aqui_estou".encode(), addr)
         except Exception as e:
             print("Erro no serviço UDP:", e)
 

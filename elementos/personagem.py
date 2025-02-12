@@ -262,9 +262,9 @@ class Personagem:
                 oponente.atc_index = 0
             
             if self.rect.centerx > oponente.rect.centerx:
-                ataque= pg.Rect((oponente.rect.right, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.right+15, oponente.rect.y, 70, 180))
             else:
-                ataque= pg.Rect((oponente.rect.left-55, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.left-65, oponente.rect.y, 70, 180))
             
             if ataque.colliderect(self.rect):
                 if self.mov=='s':
@@ -285,9 +285,9 @@ class Personagem:
                     oponente.atc_index2 = 0
             oponente.cont_h1+=1
             if self.rect.centerx > oponente.rect.centerx:
-                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.right+200, oponente.rect.y, 70, 180))
             else:
-                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.left-199, oponente.rect.y, 70, 180))
                 
             if ataque.colliderect(self.rect):
                 if self.mov=='s':
@@ -310,9 +310,9 @@ class Personagem:
             else:
                     oponente.atc_index2 = 0
             if self.rect.centerx > oponente.rect.centerx:
-                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.right+200, oponente.rect.y, 70, 180))
             else:
-                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.left-199, oponente.rect.y, 70, 180))
                 
             if ataque.colliderect(self.rect):
                 if self.mov=='s':
@@ -331,9 +331,9 @@ class Personagem:
             else:
                     oponente.atc_indexAgua = 0
             if self.rect.centerx > oponente.rect.centerx:
-                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.right+200, oponente.rect.y, 70, 180))
             else:
-                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.left-199, oponente.rect.y, 70, 180))
                 
             if ataque.colliderect(self.rect):
                 if self.mov=='s':
@@ -351,9 +351,9 @@ class Personagem:
             else:
                     oponente.atc_indexTerra = 0
             if self.rect.centerx > oponente.rect.centerx:
-                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.right+200, oponente.rect.y, 70, 180))
             else:
-                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.left-199, oponente.rect.y, 70, 180))
                 
             if ataque.colliderect(self.rect):
                 if self.mov=='s':
@@ -371,9 +371,9 @@ class Personagem:
             else:
                     oponente.atc_indexAr = 0
             if self.rect.centerx > oponente.rect.centerx:
-                ataque= pg.Rect((oponente.rect.right+110, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.right+200, oponente.rect.y, 70, 180))
             else:
-                ataque= pg.Rect((oponente.rect.left-190, oponente.rect.y, 70, 180))
+                ataque= pg.Rect((oponente.rect.left-199, oponente.rect.y, 70, 180))
                 
             if ataque.colliderect(self.rect):
                 if self.mov=='s':
