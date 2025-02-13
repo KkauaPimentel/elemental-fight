@@ -20,6 +20,11 @@ class Avatar(Personagem):
 
     
     def get_imagens(self):
+
+        '''
+        Mesma lógica do get_imagens() genérico, apenas acrescentou-se
+        as animações específicas desse tipo avatar
+        '''
         caminho= os.path.join('imagens', self.tipo)
         animacoes= ['parado.png', 'correndo.png', 'pulando.png',
                     'defesa.png', 'ataque.png', 'ataq_fogo.png',
@@ -51,10 +56,16 @@ class Avatar(Personagem):
 
         return dic_animacoes
     
-    #mudar
+
     def desenhar(self, tela, mydic, oponente):
         vel= self.vel
         
+        '''
+        É necessário ter a implementação de diversos indices de ataque para garantir
+        que as animações aconteçam mesmo que a tecla de ataque não esteja sendo pressionada,
+        já que isso resultaria na interrupção da animação de ataque pela animação "parada"
+        '''
+
         #se nada for pressionado, só roda a animação de parado
         myself_im= mydic['parado'][self.img_index]
         self.img_index+=1
@@ -67,6 +78,7 @@ class Avatar(Personagem):
         #fecha a janela se x for pressionado
         if tecla[pg.K_x]:
             pg.quit()
+        
         #Esquerda
         if tecla[pg.K_a]:
             if self.img_index >= len(mydic['correndo']):
@@ -76,6 +88,7 @@ class Avatar(Personagem):
             if self.rect.left<0:
                 self.rect.x=0
             self.mov='a'
+        
         #Direita
         if tecla[pg.K_d]:
             if self.img_index >= len(mydic['correndo']):
@@ -85,6 +98,7 @@ class Avatar(Personagem):
             if self.rect.right>tela.get_width():
                 self.rect.x=tela.get_width() - 25
             self.mov='d'
+        
         #Defesa
         if tecla[pg.K_s]:
             self.img_index=0
@@ -92,6 +106,7 @@ class Avatar(Personagem):
             self.mov='s'
 
 
+        #controle de voo
         if self.y != self.rect.y:
             self.rect.y += 20
             if self.rect.y>=530:
@@ -115,66 +130,69 @@ class Avatar(Personagem):
                 self.atc_index+=1
             else:
                 self.atc_index=0
-        #ataque normal
+        
         if tecla[pg.K_h] and self.atc_index==0:
             self.atc_index= 1
             myself_im= mydic['ataque'][self.atc_index]
             self.mov='h'
         
-        #Ajuste para sair as animações completas de habilidades
+
+        ## Habilidade de fogo
         if self.atc_index2 != 0:
             if self.atc_index2 <len(mydic['fogo']):
                 myself_im= mydic['fogo'][self.atc_index2]
                 self.atc_index2+=1
             else:
                 self.atc_index2=0
-            
-        # Habilidade de fogo    
+                
         if tecla[pg.K_LEFT] and self.atc_index2== 0:
             self.atc_index2=1
             myself_im= mydic['fogo'][self.atc_index2]
             self.mov='l'
 
+
+        # Habilidade de agua
         if self.atc_indexAgua != 0:
             if self.atc_indexAgua <len(mydic['agua']):
                 myself_im= mydic['agua'][self.atc_indexAgua]
                 self.atc_indexAgua+=1
             else:
                 self.atc_indexAgua=0
-            
-        # Habilidade de agua    
+                
         if tecla[pg.K_RIGHT] and self.atc_indexAgua== 0:
             self.atc_indexAgua=1
             myself_im= mydic['agua'][self.atc_indexAgua]
             self.mov='r'
+        
 
+        # Habilidade de terra
         if self.atc_indexTerra != 0:
             if self.atc_indexTerra <len(mydic['terra']):
                 myself_im= mydic['terra'][self.atc_indexTerra]
                 self.atc_indexTerra+=1
             else:
                 self.atc_indexTerra=0
-            
-        # Habilidade de terra    
+                
         if tecla[pg.K_DOWN] and self.atc_indexTerra== 0:
             self.atc_indexTerra=1
             myself_im= mydic['terra'][self.atc_indexTerra]
             self.mov='c'
 
+
+        # Habilidade de ar
         if self.atc_indexAr != 0:
             if self.atc_indexAr <len(mydic['ar']):
                 myself_im= mydic['ar'][self.atc_indexAr]
                 self.atc_indexAr+=1
             else:
                 self.atc_indexAr=0
-            
-        # Habilidade de ar    
+                
         if tecla[pg.K_UP] and self.atc_indexAr== 0:
             self.atc_indexAr=1
             myself_im= mydic['ar'][self.atc_indexAr]
             self.mov='t'
 
-        #habilidade2
+        #caminhos
         if tecla[pg.K_k] and self.cont_h2<1:
             self.caminhos()
             self.mov='k'
@@ -200,11 +218,8 @@ class Avatar(Personagem):
     def ataq_terra(self):
         return self.ataque * 1.05
 
+    # Habilidade especial de avatar
     def caminhos(self):
         self.set_vida(1500)
         self.set_def(1500)
         self.set_atk(999)
-
-
-# boc= Avatar()
-# print(boc)

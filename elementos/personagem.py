@@ -14,7 +14,6 @@ class Personagem:
         self.defesa = self.defesaBase
         self.largura = 25
         self.altura = 25
-        self.cor = (255, 255, 255)
         self.rect = pg.Rect(100, 530, self.largura, self.altura)  # Usando rect para posição e tamanho
         self.vel = 20
         self.img_index = 0  # Índice para animação
@@ -25,7 +24,7 @@ class Personagem:
         self.y = self.rect.y  # Posição Y inicial
         self.x= self.rect.x # Posição X inicial
         self.mov= 'p' # Indica o último movimento realizado/default= parado
-        self.jump= False
+        self.jump= False # Indica se está pulando ou não
     
     '''encontra as imagens que serão usadas e as coloca em uma lista.
     As imagens serão recortadas e usadas futuramente na função imagens(),
@@ -43,7 +42,7 @@ class Personagem:
             'ataque':[],
             'ataque2':[]
         }
-
+        
         for ind, tipo in enumerate(dic_animacoes):
             img_l = pers_list[ind].get_width()
             img_a = pers_list[ind].get_height()

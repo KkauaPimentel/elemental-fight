@@ -5,17 +5,20 @@ import pickle as pk
 import threading
 from botao import Botao
 
-
+# Realiza a busca pelo IP do servidor na rede usando broadcast 
 def discover_server():
     UDP_IP = "<broadcast>"
     UDP_PORT = 9000
+
     udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    udp_sock.settimeout(5)  # Timeout de 5 segundos
+    udp_sock.settimeout(10)  # Timeout de 10 segundos
+
     try:
-        udp_sock.sendto("caca_server".encode(), (UDP_IP, UDP_PORT))
+        udp_sock.sendto("cade_server".encode(), (UDP_IP, UDP_PORT))
         data, addr = udp_sock.recvfrom(1024)
         if data.decode().strip() == "aqui_estou":
+            # addr é o address do server
             print("Server encontrado em:", addr[0])
             return addr[0]
     except Exception as e:
@@ -32,6 +35,7 @@ def background(img):
 
 def tela_espera():
     background(img_selec)
+
     # Fontes usadas na tela
     fonte1 = pg.font.SysFont('comicsans', 65)
     fonte2 = pg.font.SysFont('comicsans', 63)
@@ -48,11 +52,11 @@ def tela_espera():
     tela.blit(texto, (tela_larg/2 - texto.get_width()/2, tela_alt/2 - texto.get_height()/2))
     tela.blit(texto2, (tela_larg/2 - texto2.get_width()/2, tela_alt/2 - texto2.get_height()/2))
     
-    # Desenha a caixa de digitação (com borda preta e fundo verde claro)
+    # Desenha a caixa de digitação
     pg.draw.rect(tela, (0,0,0), (444, 495, 330, 60))
     pg.draw.rect(tela, (200,255,200), (450, 500, 316, 50))
     
-    # Insere a legenda na caixa (lado esquerdo)
+    # Insere a legenda na caixa
     tela.blit(texto_legenda, (16, 510))
     
     # Exibe o IP digitado até o momento
@@ -61,12 +65,15 @@ def tela_espera():
     
     pg.display.update()
 
-# --- Parâmetros da janela e assets ---
+# --- Parâmetros da janela ---
+
 tela_larg, tela_alt = 1000, 640
-tela_atual = 'espera'# Indica em que tela estamos, para controle de interações
+tela_atual = 'espera'# O valor default da janela é em espera
+
 pg.font.init()# Usado para iniciar as fontes que usaremos em tela
 tela = pg.display.set_mode((tela_larg, tela_alt))
 pg.display.set_caption("Elemental Fight")# Nome da janela
+
 #Imagens usadas no fundo da tela
 img_fundo = pg.image.load(os.path.join('imagens', 'fundo-x1.jpg'))
 img_selec = pg.image.load(os.path.join('imagens', 'fundo-tela.jpg'))
@@ -78,9 +85,9 @@ img_lose = pg.image.load(os.path.join('imagens', 'fundo-lose.jpg'))
 nome = ''#Nome do personagem
 select = None# Indica que personagem foi escolhido no botão
 host = None  # Objeto do personagem do host
-flag_host= False
 oponente = None  # O objeto do personagem oponente
 flag= False # Indica se há oponente ou não
+
 '''
 ------ Interação de telas: o servidor envia uma tupla (opponent_object, flag) ------
 Se flag == False and objt None, o oponente não está disponível ainda.
@@ -89,11 +96,14 @@ Se flag == True and oponente is not None, o oponente já escolheu.
 No começo, ambos estão (None, False)
 '''
 
+# Se a busca automática de IP não der certo, permite ao usuário digitar o IP do server
 if server_ip is None:
     print("Não foi possível encontrar o servidor na rede.")
     run= True
     while run:
+        # As interações serão as mesmas encontradas na main
         tela_espera()
+
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 run = False
@@ -113,7 +123,7 @@ if server_ip is None:
                     run= False
                     break
                 else:
-                    if len(nome) < 12:
+                    if len(client_teste) < 13:
                         client_teste += event.unicode
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -164,6 +174,7 @@ def tela_combat():
     global host, oponente, tela_atual
 
     background(img_fundo)
+    # Sé o oponente está nulo, quer dizer que apertou 'r'
     if oponente is not None:
         # Se o oponente foi selecionado, desenha
         if oponente is not None:
@@ -200,9 +211,10 @@ def tela_win():
 def comunicacao():
     """
     Este loop envia periodicamente as escolhas do cliente para o servidor e recebe do servidor
-    uma tupla (obj, flag) do oponente.
+    uma tupla (obj, flag) do oponente. Também mantem a conexão
     """
-    global host, oponente, flag, flag_host
+    global host, oponente, flag
+    
     while True:
         try:
             '''--- Envio de mensagens para o servidor ---
