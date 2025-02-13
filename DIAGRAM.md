@@ -1,3 +1,4 @@
+```Mermaid
 classDiagram
 direction TB
     class Personagem{
