@@ -1,10 +1,6 @@
-```Mermaid
+```mermaid
 classDiagram
 direction TB
-    class Personagem{
-        +base
-    }
-    
     class Water{
         +Fraqueza(earth)
     }
@@ -21,8 +17,8 @@ direction TB
         +Fraqueza(fire)
     }
 
-    Water --|> Personagem
-    Fire --|> Personagem
-    Air --|> Personagem
-    Earth --|> Personagem
-    Wood --|> Personagem
+    Personagem <|-- Water
+    Personagem <|-- Fire
+    Personagem <|-- Air
+    Personagem <|-- Earth
+    Personagem <|-- Wood
