@@ -5,10 +5,10 @@ import threading
 '''
 Cada jogador é representado por uma tupla: (objt, flag)
 ambos estão como (None, False) no começo
-state1 = (None, False)  # Para o jogador 1 (cliente 1)
-state2 = (None, False)  # Para o jogador 2 (cliente 2)
 Por enquanto só suporta 2 primeiros players
 '''
+state1 = (None, False)  # Para o jogador 1 (cliente 1)
+state2 = (None, False)  # Para o jogador 2 (cliente 2)
 
 '''
 Fiz uso do lock para garantir que não haja conflito entre as interações.
