@@ -123,7 +123,7 @@ if server_ip is None:
                     run= False
                     break
                 else:
-                    if len(client_teste) < 13:
+                    if len(client_teste) < 14:
                         client_teste += event.unicode
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -197,7 +197,7 @@ def tela_combat():
 def tela_win():
     global tela_atual
     
-    if host.vida<1:# Quer dizer que perdeu
+    if host.vida<10:# Quer dizer que perdeu
         background(img_lose)
     else:# Quer dizer que ganhou
         background(img_win)
