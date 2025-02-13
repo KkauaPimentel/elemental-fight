@@ -2,24 +2,17 @@
 classDiagram
 direction LR
     class Personagem{
+        +base
     }
+    
+    class Water
+    class Fire
+    class Air
+    class Earth
+    class Wood
 
-    class Jogo{
-    }
-
-    class Rede{
-
-    }
-
-    class Client{
-
-    }
-
-    class Server{
-
-    }
-
-    Jogo "1" -- "2" Client
-    Rede "1" -- "1" Server
-    Personagem "2" -- "1" Client
-    Jogo "1" -- "1" Server
+    Water --|> Personagem
+    Fire --|> Personagem
+    Air --|> Personagem
+    Earth --|> Personagem
+    Wood --|> Personagem
