@@ -12,7 +12,7 @@ def discover_server():
 
     udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    udp_sock.settimeout(10)  # Timeout de 10 segundos
+    udp_sock.settimeout(4)  # Timeout de 4 segundos
 
     try:
         udp_sock.sendto("cade_server".encode(), (UDP_IP, UDP_PORT))
