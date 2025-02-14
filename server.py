@@ -14,6 +14,9 @@ state2 = (None, False)  # Para o jogador 2 (cliente 2)
 Fiz uso do lock para garantir que não haja conflito entre as interações.
 Ele sincroniza as movimentações/mudanças nos estados.
 ''' 
+
+# Uso pickle para poder enviar os dados complexos
+
 lock = threading.Lock()
 
 def handle_client(conn, player):
@@ -47,10 +50,28 @@ def handle_client(conn, player):
     conn.close()
     print(f"Cliente {player} desconectado.")
 
+'''
+Nesta descoberta, tento me conectar a um endereço qualquer só para
+conseguir acessar o IP atual da minha máquina na rede
+'''
+def ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('8.8.8.8', 80))
+        ip_host = s.getsockname()[0]
+    # Se eu não conseguir nenhuma conexão, não tem rede,
+    # então retorno o IP localhost
+    except Exception:
+        ip_host = '127.0.0.1'
+    # Sempre fecha a conexão, dando certo ou não, já que só queríamos o IP
+    finally:
+        s.close()
+    return ip_host
+
 def udp_discovery():
     """
     Serviço UDP para descoberta automática do servidor.
-    Escuta na porta 9000 por mensagens 'cade_server' e responde com 'aqui_estou'.
+    Escuta na porta 9000 por mensagens 'cade_server' e responde com 'aqui_estou' e seu endereço.
     """
 
     # Endereço global, onde aceita conexões de onde for
@@ -65,7 +86,8 @@ def udp_discovery():
             data, addr = udp_sock.recvfrom(1024)
             if data.decode().strip() == "cade_server":
                 # Permite a conexão do endereço recebido
-                udp_sock.sendto("aqui_estou".encode(), addr)
+                resp= ("aqui_estou", ip())
+                udp_sock.sendto(pickle.dumps(resp), addr)
         except Exception as e:
             print("Erro no serviço UDP:", e)
 
@@ -75,12 +97,11 @@ def main():
     # A conexão usada a partir daqui é TCP
     threading.Thread(target=udp_discovery, daemon=True).start()
     
-    server_ip = "0.0.0.0"
     server_port = 8000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((server_ip, server_port))
+    s.bind((ip(), server_port))
     s.listen(6)
-    print(f"Servidor iniciado em {server_ip}:{server_port}")
+    print(f"Servidor iniciado em {ip()}:{server_port}")
     
     clients = []
     # O primeiro a entrar recebe 1

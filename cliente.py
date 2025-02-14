@@ -14,13 +14,20 @@ def discover_server():
     udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     udp_sock.settimeout(4)  # Timeout de 4 segundos
 
+    '''
+    Envia-se uma mensagem broadcast(para toda a rede local)
+    Se obter um IP, conecta-se a primeira máquina que respondeu
+    Se você quiser se conectar a um IP específico, pode inserir ele
+    em server_ip, substituindo a descoberta 
+    '''
     try:
         udp_sock.sendto("cade_server".encode(), (UDP_IP, UDP_PORT))
         data, addr = udp_sock.recvfrom(1024)
-        if data.decode().strip() == "aqui_estou":
+        resp= pk.loads(data)
+        if resp[0] == "aqui_estou":
             # addr é o address do server
-            print("Server encontrado em:", addr[0])
-            return addr[0]
+            print("Server encontrado em:", resp[1])
+            return resp[1]
     except Exception as e:
         print("Server não encontrado:", e)
     return None
@@ -29,6 +36,7 @@ client_teste= ""
 server_ip = discover_server()
 
 def background(img):
+    # Ajusta as imagens a tela
     img_ajust = pg.transform.scale(img, (tela_larg, tela_alt))
     tela.blit(img_ajust, (0,0))
 
