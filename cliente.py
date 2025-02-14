@@ -135,6 +135,7 @@ if server_ip is None:
                         client_teste += event.unicode
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Se não funcionar das duas formas, não há rede disponível, logo não há como jogarem
 client.connect((server_ip, 8000))
 
 

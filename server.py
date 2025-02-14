@@ -62,7 +62,7 @@ def ip():
     # Se eu não conseguir nenhuma conexão, não tem rede,
     # então retorno o IP localhost
     except Exception:
-        ip_host = '127.0.0.1'
+        ip_host = 'Falha na descoberta'
     # Sempre fecha a conexão, dando certo ou não, já que só queríamos o IP
     finally:
         s.close()
